@@ -1,9 +1,14 @@
 import { type Minecraft } from "@iskallia/item-model-renderer";
-import { memo, useState } from "react";
+import { PropsWithChildren, memo, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { archemageWandModel } from "./asset/model/archemage_wand";
-import { OrbitControls, OrthographicCamera } from "@react-three/drei";
+import {
+  CameraControls,
+  OrbitControls,
+  OrthographicCamera,
+  TransformControls,
+} from "@react-three/drei";
 import archmageTexture from "./asset/texture/archmage.png";
 import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import testTexture from "./asset/texture/test.png";
@@ -14,11 +19,26 @@ import { testModel } from "./asset/model/test_model";
 // Maybe we shall create our lightweight texture cache/registry?
 THREE.Cache.enabled = true;
 
+const RotateAroundPivot = (
+  props: PropsWithChildren & {
+    pivot: Minecraft.Vec3;
+    rot: Minecraft.Vec3;
+  }
+) => {
+  return (
+    <group position={props.pivot}>
+      <group rotation={props.rot}>{props.children}</group>
+    </group>
+  );
+};
+
 const Cuboid = memo(
   (props: {
     textureMap: Record<string, string>;
     element: Minecraft.ItemModelElement;
   }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+
     // Create a texture loader
     const textureLoader = new THREE.TextureLoader();
 
@@ -30,10 +50,10 @@ const Cuboid = memo(
     const geometry = new THREE.BoxGeometry(lenX, lenY, lenZ);
 
     const prepVec8 = (uv: Minecraft.Vec4) => {
-      const left = (4 * uv[0]) / 64;
-      const right = (4 * uv[2]) / 64;
-      const bottom = 1 - (4 * uv[1]) / 64;
-      const top = 1 - (4 * uv[3]) / 64;
+      const left = uv[0] / 16;
+      const right = uv[2] / 16;
+      const bottom = 1 - uv[1] / 16;
+      const top = 1 - uv[3] / 16;
 
       // prettier-ignore
       return [
@@ -72,9 +92,43 @@ const Cuboid = memo(
       });
     });
 
-    // Create a Mesh with the geometry and materials
+    useEffect(() => {
+      const angle = props.element.rotation?.angle ?? 0;
+      const axis = props.element.rotation?.axis;
+      const pivot = props.element.rotation?.origin;
+      const pushPopTranslation = (tr: Minecraft.Vec3, fn: () => void) => {
+        meshRef.current!.translateX(tr[0]);
+        meshRef.current!.translateY(tr[1]);
+        meshRef.current!.translateZ(tr[2]);
+        fn();
+        meshRef.current!.translateX(-tr[0]);
+        meshRef.current!.translateY(-tr[1]);
+        meshRef.current!.translateZ(-tr[2]);
+      };
+      if (angle !== 0) {
+        pushPopTranslation(
+          [
+            //
+            pivot![0] - props.element.from[0] - lenX / 2,
+            pivot![1] - props.element.from[1] - lenY / 2,
+            pivot![2] - props.element.from[2] - lenZ / 2,
+          ],
+          () => {
+            if (axis === "x") {
+              meshRef.current!.rotateX(angle * (Math.PI / 180));
+            } else if (axis === "y") {
+              meshRef.current!.rotateY(angle * (Math.PI / 180));
+            } else if (axis === "z") {
+              meshRef.current!.rotateZ(angle * (Math.PI / 180));
+            }
+          }
+        );
+      }
+    }, []);
+
     return (
       <mesh
+        ref={meshRef}
         geometry={geometry}
         material={materials}
         position={[
@@ -82,9 +136,7 @@ const Cuboid = memo(
           props.element.from[1] + lenY / 2 - 8,
           props.element.from[2] + lenZ / 2 - 8,
         ]}
-      >
-        {/* You can add other props like position, rotation, etc. if needed */}
-      </mesh>
+      />
     );
   }
 );
@@ -234,21 +286,21 @@ export const App = () => {
           border: "2px solid white",
         }}
       >
-        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
+        <Canvas orthographic camera={{ zoom: 20, position: [0, 0, 100] }}>
           {/* <ambientLight color={0x404040} intensity={0.5} /> */}
           <ambientLight intensity={0.5} color={0xffffffff} />
           <directionalLight position={[-1, -1, 10]} />
           {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
           {/* <pointLight position={[-10, -10, -10]} /> */}
 
-          <group rotation={[0, 1, 0]}>
+          <group rotation={[0, 0, 0]}>
             <group
-              position={deathsDoorModel.display.gui?.translation}
-              rotation={
-                deathsDoorModel.display.gui?.rotation?.map(
-                  (r) => (r * Math.PI) / 180
-                ) as Minecraft.Vec3
-              }
+              // position={deathsDoorModel.display.gui?.translation}
+              // rotation={
+              //   deathsDoorModel.display.gui?.rotation?.map(
+              //     (r) => (r * Math.PI) / 180
+              //   ) as Minecraft.Vec3
+              // }
               scale={deathsDoorModel.display.gui?.scale}
             >
               {deathsDoorModel.elements.map((element, i) => (
@@ -256,6 +308,7 @@ export const App = () => {
               ))}
             </group>
           </group>
+          <CameraControls />
         </Canvas>
 
         <p
