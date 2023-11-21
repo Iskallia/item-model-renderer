@@ -5,9 +5,19 @@ export namespace Minecraft {
 
   export type Axis = "x" | "y" | "z";
 
+  export type ItemModelDisplayPosition =
+    | "thirdperson_righthand"
+    | "thirdperson_lefthand"
+    | "firstperson_righthand"
+    | "firstperson_lefthand"
+    | "ground"
+    | "gui"
+    | "fixed";
+
   export type ItemModelFace = { uv: Vec4; texture: string };
 
   export type ItemModelElement = {
+    name?: string;
     from: Vec3;
     to: Vec3;
     rotation?: { angle: number; axis: Axis; origin: Vec3 };
@@ -33,7 +43,7 @@ export namespace Minecraft {
     textures: Record<string, string>;
     elements: ItemModelElement[];
 
-    display: Record<string, ItemModelTransformation>;
+    display: Partial<Record<ItemModelDisplayPosition, ItemModelTransformation>>;
     groups?: any;
 
     parent?: any;

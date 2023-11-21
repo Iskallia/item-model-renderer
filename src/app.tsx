@@ -5,21 +5,14 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { archemageWandModel } from "./asset/model/archemage_wand";
 import { OrbitControls, OrthographicCamera } from "@react-three/drei";
 import archmageTexture from "./asset/texture/archmage.png";
+import deathsDoorTexture from "./asset/texture/deaths_door.png";
+import testTexture from "./asset/texture/test.png";
 import { text } from "stream/consumers";
+import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
+import { testModel } from "./asset/model/test_model";
 
 // Maybe we shall create our lightweight texture cache/registry?
 THREE.Cache.enabled = true;
-
-function convertQuadToTriangles(quadUV: Minecraft.Vec4) {
-  // Assuming quadUV is a Vec4 or an array [left, top, right, bottom]
-  const [left, top, right, bottom] = quadUV;
-
-  // Convert the quad UVs to two triangles
-  const triangle1 = [left, top, right, top, right, bottom];
-  const triangle2 = [left, top, right, bottom, left, bottom];
-
-  return [triangle1, triangle2];
-}
 
 const Cuboid = memo(
   (props: {
@@ -44,22 +37,22 @@ const Cuboid = memo(
 
       // prettier-ignore
       return [
-        right, bottom, 
         left, bottom, 
-        right, top, 
-        left, top
+        right, bottom, 
+        left, top, 
+        right, top
       ];
     };
 
     // Set UV coordinates for each face
     const uvAttribute = new THREE.BufferAttribute(
       new Float32Array([
-        ...prepVec8(props.element.faces.south.uv), // 0
-        ...prepVec8(props.element.faces.north.uv), // 1
+        ...prepVec8(props.element.faces.east.uv), // 0
+        ...prepVec8(props.element.faces.west.uv), // 1
         ...prepVec8(props.element.faces.up.uv), // 2
         ...prepVec8(props.element.faces.down.uv), // 3
-        ...prepVec8(props.element.faces.east.uv), // 4
-        ...prepVec8(props.element.faces.west.uv), // 5
+        ...prepVec8(props.element.faces.south.uv), // 4
+        ...prepVec8(props.element.faces.north.uv), // 5
       ]),
       2
     );
@@ -72,7 +65,7 @@ const Cuboid = memo(
       const texture = textureLoader.load(props.textureMap[side]);
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
-      return new THREE.MeshPhongMaterial({
+      return new THREE.MeshStandardMaterial({
         map: texture,
         transparent: true,
         alphaTest: 1,
@@ -113,6 +106,22 @@ export const App = () => {
     south: archmageTexture,
     north: archmageTexture,
   };
+  const textures2 = {
+    top: deathsDoorTexture,
+    east: deathsDoorTexture,
+    west: deathsDoorTexture,
+    bottom: deathsDoorTexture,
+    south: deathsDoorTexture,
+    north: deathsDoorTexture,
+  };
+  const textures3 = {
+    top: testTexture,
+    east: testTexture,
+    west: testTexture,
+    bottom: testTexture,
+    south: testTexture,
+    north: testTexture,
+  };
 
   return (
     <div
@@ -122,6 +131,7 @@ export const App = () => {
         alignItems: "center",
         justifyContent: "center",
         gap: 10,
+        flexWrap: "wrap",
       }}
     >
       <div
@@ -141,13 +151,13 @@ export const App = () => {
 
           <group rotation={[0, 0, 0]}>
             <group
-              position={archemageWandModel.display.gui.translation}
+              position={archemageWandModel.display.gui?.translation}
               rotation={
-                archemageWandModel.display.gui.rotation?.map(
+                archemageWandModel.display.gui?.rotation?.map(
                   (r) => (r * Math.PI) / 180
                 ) as Minecraft.Vec3
               }
-              scale={archemageWandModel.display.gui.scale}
+              scale={archemageWandModel.display.gui?.scale}
             >
               {archemageWandModel.elements.map((element, i) => (
                 <Cuboid key={i} element={element} textureMap={textures} />
@@ -169,6 +179,7 @@ export const App = () => {
           GUI Preview
         </p>
       </div>
+
       <div
         style={{
           position: "relative",
@@ -186,16 +197,108 @@ export const App = () => {
 
           <group rotation={[0, 0, 0]}>
             <group
-              position={archemageWandModel.display.gui.translation}
+              position={archemageWandModel.display.gui?.translation}
               rotation={
-                archemageWandModel.display.gui.rotation?.map(
+                archemageWandModel.display.gui?.rotation?.map(
                   (r) => (r * Math.PI) / 180
                 ) as Minecraft.Vec3
               }
-              scale={archemageWandModel.display.gui.scale}
+              scale={archemageWandModel.display.gui?.scale}
             >
               {archemageWandModel.elements.map((element, i) => (
                 <Cuboid key={i} element={element} textureMap={textures} />
+              ))}
+            </group>
+          </group>
+        </Canvas>
+
+        <p
+          style={{
+            position: "absolute",
+            bottom: "10px",
+            right: "15px",
+            margin: 0,
+            fontFamily: "consolas",
+            color: "white",
+          }}
+        >
+          GUI Preview
+        </p>
+      </div>
+
+      <div
+        style={{
+          position: "relative",
+          height: 480,
+          width: 480,
+          border: "2px solid white",
+        }}
+      >
+        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
+          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
+          <ambientLight intensity={0.5} color={0xffffffff} />
+          <directionalLight position={[-1, -1, 10]} />
+          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
+          {/* <pointLight position={[-10, -10, -10]} /> */}
+
+          <group rotation={[0, 1, 0]}>
+            <group
+              position={deathsDoorModel.display.gui?.translation}
+              rotation={
+                deathsDoorModel.display.gui?.rotation?.map(
+                  (r) => (r * Math.PI) / 180
+                ) as Minecraft.Vec3
+              }
+              scale={deathsDoorModel.display.gui?.scale}
+            >
+              {deathsDoorModel.elements.map((element, i) => (
+                <Cuboid key={i} element={element} textureMap={textures2} />
+              ))}
+            </group>
+          </group>
+        </Canvas>
+
+        <p
+          style={{
+            position: "absolute",
+            bottom: "10px",
+            right: "15px",
+            margin: 0,
+            fontFamily: "consolas",
+            color: "white",
+          }}
+        >
+          GUI Preview
+        </p>
+      </div>
+
+      <div
+        style={{
+          position: "relative",
+          height: 480,
+          width: 480,
+          border: "2px solid white",
+        }}
+      >
+        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
+          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
+          <ambientLight intensity={0.25} color={0xffffffff} />
+          <directionalLight position={[-1, -1, 10]} />
+          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
+          {/* <pointLight position={[-10, -10, -10]} /> */}
+
+          <group rotation={[0, 0, 0]}>
+            <group
+              position={testModel.display.gui?.translation}
+              rotation={
+                testModel.display.gui?.rotation?.map(
+                  (r) => (r * Math.PI) / 180
+                ) as Minecraft.Vec3
+              }
+              scale={testModel.display.gui?.scale}
+            >
+              {testModel.elements.map((element, i) => (
+                <Cuboid key={i} element={element} textureMap={textures3} />
               ))}
             </group>
           </group>
