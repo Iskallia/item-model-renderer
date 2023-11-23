@@ -12,7 +12,8 @@ export namespace Minecraft {
     | "firstperson_lefthand"
     | "ground"
     | "gui"
-    | "fixed";
+    | "fixed"
+    | "head";
 
   export type ItemModelFace = { uv: Vec4; texture: string };
 
