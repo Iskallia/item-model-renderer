@@ -1,16 +1,19 @@
-import { Canvas } from "@react-three/fiber";
-import { Minecraft } from "../types";
 import { Cuboid } from "@iskallia/item-model-renderer";
+import { Canvas } from "@react-three/fiber";
+import { TextureLoader } from "lib/render/TextureLoader";
+import { ObjUtils } from "lib/util/obj.utils";
 import { useRef } from "react";
 import { Material, MeshStandardMaterial } from "three";
 import { degToRad } from "three/src/math/MathUtils";
-import { ObjUtils } from "lib/util/obj.utils";
-import { TextureLoader } from "lib/render/TextureLoader";
+import useResizeObserver from "use-resize-observer";
+import { Minecraft } from "../types";
+import { OrthographicCamera } from "@react-three/drei";
 
 interface Props {
   itemModel: Minecraft.ItemModel;
   itemModelTransform?: Minecraft.ItemModelTransformationName;
   resolveTextureUrl: (resourceLocation: string) => string;
+  zoomFactor?: number;
 }
 
 const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
@@ -24,10 +27,22 @@ export const ItemModelRender = (props: Props) => {
   const modelTransformation =
     props.itemModel.display[modelTransformName] ?? IDENTITY_TRANSFORM;
 
+  const canvasRef = useResizeObserver<HTMLCanvasElement>({ box: "border-box" });
+
   const materialLookup = useRef(new Map<string, Material>());
 
+  const zoomFactor = props.zoomFactor ?? 1;
+  const zoom = zoomFactor * ((25 / 480) * (canvasRef.width ?? 480));
+
   return (
-    <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
+    <Canvas ref={canvasRef.ref}>
+      <OrthographicCamera
+        makeDefault
+        manual
+        zoom={zoom}
+        position={[0, 0, 100]}
+      />
+
       <ambientLight intensity={0.25} color={0xffffffff} />
       <directionalLight position={[-1, -1, 10]} />
 
