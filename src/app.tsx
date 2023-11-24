@@ -16,6 +16,7 @@ import { text } from "stream/consumers";
 import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
 import { testModel } from "./asset/model/test_model";
 import { Cuboid } from "lib/render/Cuboid";
+import { ItemModelRender } from "lib/render/ItemModelRender";
 
 export const App = () => {
   // const textures = {
@@ -67,34 +68,19 @@ export const App = () => {
           position: "relative",
           height: 480,
           width: 480,
-          border: "2px solid white",
+          border: "6px solid #F8AD1D",
+          backgroundImage:
+            "url('https://vaulthunters.gg/assets/icon-frame-e92a019c.png')",
+          backgroundPosition: "center",
+          backgroundSize: "110%",
         }}
       >
-        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
-          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
-          <ambientLight intensity={1} color={0xffffffff} />
-          {/* <pointLight position={[-2, 2, 0]} /> */}
-          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
-          {/* <pointLight position={[-10, -10, -10]} /> */}
+        <ItemModelRender
+          itemModel={archemageWandModel}
+          resolveTextureUrl={(resourceLocation) => archmageTexture}
+        />
 
-          <group rotation={[0, 0, 0]}>
-            <group
-              position={archemageWandModel.display.gui?.translation}
-              rotation={
-                archemageWandModel.display.gui?.rotation?.map(
-                  (r) => (r * Math.PI) / 180
-                ) as Minecraft.Vec3
-              }
-              scale={archemageWandModel.display.gui?.scale}
-            >
-              {archemageWandModel.elements.map((element, i) => (
-                <Cuboid key={i} element={element} textureMap={textures} />
-              ))}
-            </group>
-          </group>
-        </Canvas>
-
-        <p
+        {/* <p
           style={{
             position: "absolute",
             bottom: "10px",
@@ -105,146 +91,7 @@ export const App = () => {
           }}
         >
           GUI Preview
-        </p>
-      </div>
-
-      <div
-        style={{
-          position: "relative",
-          height: 480,
-          width: 480,
-          border: "2px solid white",
-        }}
-      >
-        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
-          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
-          <ambientLight intensity={0.5} color={0xffffffff} />
-          <directionalLight position={[-1, -1, 10]} />
-          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
-          {/* <pointLight position={[-10, -10, -10]} /> */}
-
-          <group rotation={[0, 0, 0]}>
-            <group
-              position={archemageWandModel.display.gui?.translation}
-              rotation={
-                archemageWandModel.display.gui?.rotation?.map(
-                  (r) => (r * Math.PI) / 180
-                ) as Minecraft.Vec3
-              }
-              scale={archemageWandModel.display.gui?.scale}
-            >
-              {archemageWandModel.elements.map((element, i) => (
-                <Cuboid key={i} element={element} textureMap={textures} />
-              ))}
-            </group>
-          </group>
-        </Canvas>
-
-        <p
-          style={{
-            position: "absolute",
-            bottom: "10px",
-            right: "15px",
-            margin: 0,
-            fontFamily: "consolas",
-            color: "white",
-          }}
-        >
-          GUI Preview
-        </p>
-      </div>
-
-      <div
-        style={{
-          position: "relative",
-          height: 480,
-          width: 480,
-          border: "2px solid white",
-        }}
-      >
-        <Canvas orthographic camera={{ zoom: 20, position: [0, 0, 100] }}>
-          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
-          <ambientLight intensity={0.5} color={0xffffffff} />
-          <directionalLight position={[-1, -1, 10]} />
-          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
-          {/* <pointLight position={[-10, -10, -10]} /> */}
-
-          <group rotation={[0, 0, 0]}>
-            <group
-              // position={deathsDoorModel.display.gui?.translation}
-              // rotation={
-              //   deathsDoorModel.display.gui?.rotation?.map(
-              //     (r) => (r * Math.PI) / 180
-              //   ) as Minecraft.Vec3
-              // }
-              scale={deathsDoorModel.display.gui?.scale}
-            >
-              {deathsDoorModel.elements.map((element, i) => (
-                <Cuboid key={i} element={element} textureMap={textures2} />
-              ))}
-            </group>
-          </group>
-          <CameraControls />
-        </Canvas>
-
-        <p
-          style={{
-            position: "absolute",
-            bottom: "10px",
-            right: "15px",
-            margin: 0,
-            fontFamily: "consolas",
-            color: "white",
-          }}
-        >
-          GUI Preview
-        </p>
-      </div>
-
-      <div
-        style={{
-          position: "relative",
-          height: 480,
-          width: 480,
-          border: "2px solid white",
-        }}
-      >
-        <Canvas orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
-          {/* <ambientLight color={0x404040} intensity={0.5} /> */}
-          <ambientLight intensity={0.25} color={0xffffffff} />
-          <directionalLight position={[-1, -1, 10]} />
-          {/* <spotLight position={[10, 10, 10]} angle={0} penumbra={1} /> */}
-          {/* <pointLight position={[-10, -10, -10]} /> */}
-
-          <group rotation={[0, 0, 0]}>
-            <group
-              position={testModel.display.gui?.translation}
-              rotation={
-                testModel.display.gui?.rotation?.map(
-                  (r) => (r * Math.PI) / 180
-                ) as Minecraft.Vec3
-              }
-              scale={testModel.display.gui?.scale}
-            >
-              {testModel.elements.map((element, i) => (
-                <Cuboid key={i} element={element} textureMap={textures3} />
-              ))}
-            </group>
-          </group>
-        </Canvas>
-
-        <p
-          style={{
-            position: "absolute",
-            bottom: "10px",
-            right: "15px",
-            margin: 0,
-            fontFamily: "consolas",
-            color: "white",
-          }}
-        >
-          GUI Preview
-        </p>
+        </p> */}
       </div>
     </div>
   );

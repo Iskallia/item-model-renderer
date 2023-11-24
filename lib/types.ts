@@ -5,7 +5,15 @@ export namespace Minecraft {
 
   export type Axis = "x" | "y" | "z";
 
-  export type ItemModelDisplayPosition =
+  export type CuboidSide =
+    | "up"
+    | "down"
+    | "west"
+    | "east"
+    | "north"
+    | "south";
+
+  export type ItemModelTransformationName =
     | "thirdperson_righthand"
     | "thirdperson_lefthand"
     | "firstperson_righthand"
@@ -22,14 +30,7 @@ export namespace Minecraft {
     from: Vec3;
     to: Vec3;
     rotation?: { angle: number; axis: Axis; origin: Vec3 };
-    faces: {
-      up: ItemModelFace;
-      down: ItemModelFace;
-      north: ItemModelFace;
-      east: ItemModelFace;
-      south: ItemModelFace;
-      west: ItemModelFace;
-    };
+    faces: Record<CuboidSide, ItemModelFace>;
   };
 
   export type ItemModelTransformation = {
@@ -44,7 +45,9 @@ export namespace Minecraft {
     textures: Record<string, string>;
     elements: ItemModelElement[];
 
-    display: Partial<Record<ItemModelDisplayPosition, ItemModelTransformation>>;
+    display: Partial<
+      Record<ItemModelTransformationName, ItemModelTransformation>
+    >;
     groups?: any;
 
     parent?: any;

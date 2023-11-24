@@ -1,10 +1,6 @@
 import { memo, useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
+import { BoxGeometry, BufferAttribute, Mesh } from "three";
 import { Minecraft } from "../types";
-import { TextureLoader } from "lib/render/TextureLoader";
-
-// Maybe we shall create our lightweight texture cache/registry?
-THREE.Cache.enabled = true;
 
 function prepFaceUV(uv: Minecraft.Vec4) {
   const left = uv[0] / 16;
@@ -23,32 +19,30 @@ function prepFaceUV(uv: Minecraft.Vec4) {
 
 export const Cuboid = memo(
   (props: {
-    textureMap: Record<string, string>;
+    materialMap: Record<Minecraft.CuboidSide, THREE.Material>;
     element: Minecraft.ItemModelElement;
   }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
+    const meshRef = useRef<Mesh>(null);
 
     const lenX = props.element.to[0] - props.element.from[0];
     const lenY = props.element.to[1] - props.element.from[1];
     const lenZ = props.element.to[2] - props.element.from[2];
 
-    const geometry = useMemo(() => new THREE.BoxGeometry(lenX, lenY, lenZ), []);
+    const geometry = useMemo(() => new BoxGeometry(lenX, lenY, lenZ), []);
 
     const materials = useMemo(() => {
-      return Object.keys(props.textureMap).map((side) => {
-        const texture = TextureLoader.getOrLoadItemTexture(
-          props.textureMap[side]
-        );
-        return new THREE.MeshStandardMaterial({
-          map: texture,
-          transparent: true,
-          alphaTest: 1,
-        });
-      });
+      return [
+        props.materialMap.east,
+        props.materialMap.west,
+        props.materialMap.up,
+        props.materialMap.down,
+        props.materialMap.south,
+        props.materialMap.north,
+      ];
     }, [geometry]);
 
     useEffect(() => {
-      const uvAttribute = new THREE.BufferAttribute(
+      const uvAttribute = new BufferAttribute(
         new Float32Array([
           ...prepFaceUV(props.element.faces.east.uv), // 0
           ...prepFaceUV(props.element.faces.west.uv), // 1
