@@ -1,5 +1,5 @@
 export namespace ObjUtils {
-  export function mapValues<O extends object, MV>(
+  export function mapObject<O extends object, MV>(
     obj: O,
     mapper: (key: keyof O, value: O[keyof O]) => MV
   ) {
@@ -9,5 +9,9 @@ export namespace ObjUtils {
       mappedObj[key] = mapper(key, value);
       return mappedObj;
     }, {} as Record<keyof O, MV>);
+  }
+
+  export function getValues<O extends object>(obj: O) {
+    return Object.values(obj) as O[keyof O][];
   }
 }

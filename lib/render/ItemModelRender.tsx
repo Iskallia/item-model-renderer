@@ -1,18 +1,20 @@
 import { Cuboid } from "@iskallia/item-model-renderer";
+import { OrthographicCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { MeshMinecraftMaterial } from "lib/render/MeshMinecraftMaterial";
 import { TextureLoader } from "lib/render/TextureLoader";
 import { ObjUtils } from "lib/util/obj.utils";
 import { useRef } from "react";
-import { Material, MeshStandardMaterial } from "three";
+import usePromise from "react-use-promise";
 import { degToRad } from "three/src/math/MathUtils";
 import useResizeObserver from "use-resize-observer";
 import { Minecraft } from "../types";
-import { OrthographicCamera } from "@react-three/drei";
 
 interface Props {
   itemModel: Minecraft.ItemModel;
   itemModelTransform?: Minecraft.ItemModelTransformationName;
   resolveTextureUrl: (resourceLocation: string) => string;
+  resolveMcmeta: (resourceLocation: string) => Promise<Minecraft.Mcmeta | null>;
   zoomFactor?: number;
 }
 
@@ -29,10 +31,28 @@ export const ItemModelRender = (props: Props) => {
 
   const canvasRef = useResizeObserver<HTMLCanvasElement>({ box: "border-box" });
 
-  const materialLookup = useRef(new Map<string, Material>());
+  const materialLookup = useRef(new Map<string, MeshMinecraftMaterial>());
+
+  const [mcmetaData] = usePromise(
+    () =>
+      Promise.all(
+        ObjUtils.getValues(props.itemModel.textures).map(async (textureId) => [
+          textureId,
+          await props.resolveMcmeta(textureId),
+        ])
+      ).then(
+        (entries) =>
+          Object.fromEntries(entries) as Record<string, Minecraft.Mcmeta | null>
+      ),
+    [props.itemModel]
+  );
 
   const zoomFactor = props.zoomFactor ?? 1;
   const zoom = zoomFactor * ((25 / 480) * (canvasRef.width ?? 480));
+
+  if (mcmetaData == null) {
+    return null;
+  }
 
   return (
     <Canvas ref={canvasRef.ref}>
@@ -52,7 +72,7 @@ export const ItemModelRender = (props: Props) => {
         scale={modelTransformation.scale}
       >
         {props.itemModel.elements.map((element, i) => {
-          const materialMap = ObjUtils.mapValues(
+          const materialMap = ObjUtils.mapObject(
             element.faces,
             (side, face) => {
               const textureRef = face.texture.substring(1);
@@ -64,10 +84,11 @@ export const ItemModelRender = (props: Props) => {
               }
 
               const texture = TextureLoader.getOrLoadItemTexture(textureUrl);
-              const material = new MeshStandardMaterial({
+              const material = new MeshMinecraftMaterial({
                 map: texture,
                 transparent: true,
                 alphaTest: 1,
+                mcmeta: mcmetaData[textureLocation],
               });
 
               materialLookup.current.set(textureUrl, material);

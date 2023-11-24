@@ -5,13 +5,7 @@ export namespace Minecraft {
 
   export type Axis = "x" | "y" | "z";
 
-  export type CuboidSide =
-    | "up"
-    | "down"
-    | "west"
-    | "east"
-    | "north"
-    | "south";
+  export type CuboidSide = "up" | "down" | "west" | "east" | "north" | "south";
 
   export type ItemModelTransformationName =
     | "thirdperson_righthand"
@@ -22,6 +16,16 @@ export namespace Minecraft {
     | "gui"
     | "fixed"
     | "head";
+
+  export type Mcmeta = {
+    animation: {
+      interpolate?: boolean;
+      width?: number;
+      height?: number;
+      frametime?: number;
+      frames?: ({ index: number; time: number } | number)[];
+    };
+  };
 
   export type ItemModelFace = { uv: Vec4; texture: string };
 

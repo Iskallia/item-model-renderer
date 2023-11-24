@@ -5,10 +5,13 @@ import archmageTexture from "./asset/texture/archmage.png";
 import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import bigChoppaTexture from "./asset/texture/big_choppa.png";
 import bigChoppaTexture1 from "./asset/texture/big_choppa_layer1.png";
+import bigChoppaTexture1McmetaRaw from "./asset/texture/big_choppa_layer1.png.mcmeta?raw";
 
 import { archemageWandModel } from "./asset/model/archemage_wand";
 import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
 import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
+import { Minecraft } from "lib/types";
+import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
@@ -26,6 +29,17 @@ export const App = () => {
     }
   };
 
+  const mcmetaResolver = async (resourceLocation: string) => {
+    return resolveAfterDelay(() => {
+      switch (resourceLocation) {
+        case "the_vault:item/gear/axe/big_choppa_layer1":
+          return JSON.parse(bigChoppaTexture1McmetaRaw) as Minecraft.Mcmeta;
+        default:
+          return null;
+      }
+    }, 1000);
+  };
+
   return (
     <div
       className="app"
@@ -40,16 +54,19 @@ export const App = () => {
       <DisplayStand
         itemModel={archemageWandModel}
         resolveTextureUrl={textureResolver}
+        resolveMcmeta={mcmetaResolver}
         zoomFactor={0.8}
       />
       <DisplayStand
         itemModel={deathsDoorModel}
         resolveTextureUrl={textureResolver}
+        resolveMcmeta={mcmetaResolver}
         zoomFactor={0.8}
       />
       <DisplayStand
         itemModel={deathsDoorModel}
         resolveTextureUrl={textureResolver}
+        resolveMcmeta={mcmetaResolver}
         zoomFactor={0.5}
         containerSize={200}
       />
@@ -57,6 +74,7 @@ export const App = () => {
       <DisplayStand
         itemModel={bigChoppaModel}
         resolveTextureUrl={textureResolver}
+        resolveMcmeta={mcmetaResolver}
         zoomFactor={0.5}
       />
     </div>

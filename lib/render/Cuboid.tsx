@@ -1,12 +1,18 @@
+import { MeshMinecraftMaterial } from "lib/render/MeshMinecraftMaterial";
 import { useEffect, useMemo, useRef } from "react";
 import { BoxGeometry, BufferAttribute, Mesh } from "three";
 import { Minecraft } from "../types";
 
-function prepFaceUV(uv: Minecraft.Vec4) {
+function prepFaceUV(uv: Minecraft.Vec4, material?: MeshMinecraftMaterial) {
+  const mcmeta = material?.mcmeta;
+  const frameWidth = mcmeta?.animation?.width ?? material?.map?.image.width;
+  const frameHeight = mcmeta?.animation?.height ?? material?.map?.image.height;
+  const frameCount = mcmeta != null ? frameHeight / frameWidth : 1;
+
   const left = uv[0] / 16;
   const right = uv[2] / 16;
-  const bottom = 1 - uv[1] / 16;
-  const top = 1 - uv[3] / 16;
+  const bottom = (1 - uv[1] / 16) / frameCount;
+  const top = (1 - uv[3] / 16) / frameCount;
 
   // prettier-ignore
   return [
@@ -18,7 +24,7 @@ function prepFaceUV(uv: Minecraft.Vec4) {
 }
 
 export const Cuboid = (props: {
-  materialMap: Record<Minecraft.CuboidSide, THREE.Material>;
+  materialMap: Record<Minecraft.CuboidSide, MeshMinecraftMaterial>;
   element: Minecraft.ItemModelElement;
 }) => {
   const meshRef = useRef<Mesh>(null);
@@ -39,19 +45,21 @@ export const Cuboid = (props: {
   ];
 
   useEffect(() => {
-    const uvAttribute = new BufferAttribute(
-      new Float32Array([
-        ...prepFaceUV(props.element.faces.east.uv), // 0
-        ...prepFaceUV(props.element.faces.west.uv), // 1
-        ...prepFaceUV(props.element.faces.up.uv), // 2
-        ...prepFaceUV(props.element.faces.down.uv), // 3
-        ...prepFaceUV(props.element.faces.south.uv), // 4
-        ...prepFaceUV(props.element.faces.north.uv), // 5
-      ]),
-      2
+    const faces = props.element.faces;
+    geometry.setAttribute(
+      "uv",
+      new BufferAttribute(
+        new Float32Array([
+          ...prepFaceUV(faces.east.uv, props.materialMap.east), // 0
+          ...prepFaceUV(faces.west.uv, props.materialMap.west), // 1
+          ...prepFaceUV(faces.up.uv, props.materialMap.up), // 2
+          ...prepFaceUV(faces.down.uv, props.materialMap.down), // 3
+          ...prepFaceUV(faces.south.uv, props.materialMap.south), // 4
+          ...prepFaceUV(faces.north.uv, props.materialMap.north), // 5
+        ]),
+        2
+      )
     );
-
-    geometry.setAttribute("uv", uvAttribute);
   }, [geometry, props.element]);
 
   useEffect(() => {
