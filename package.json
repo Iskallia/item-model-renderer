@@ -1,6 +1,6 @@
 {
   "name": "@iskallia/item-model-renderer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "repository": "github:Iskallia/item-model-renderer",
   "keywords": [],
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc -p tsconfig.node.json && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
     "lint:fix": "pnpm run lint --fix",
@@ -46,11 +46,11 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
-    "@react-three/drei": "^9.88.17",
-    "@react-three/fiber": "^8.15.11",
+    "@react-three/drei": "^9.92.4",
+    "@react-three/fiber": "^8.15.12",
     "react": "^18.2.0",
     "react-use-promise": "^0.5.0",
-    "three": "^0.158.0",
+    "three": "^0.159.0",
     "use-resize-observer": "^9.1.0"
   }
 }
