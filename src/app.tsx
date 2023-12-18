@@ -12,6 +12,7 @@ import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
 import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
 import { Minecraft } from "lib/types";
 import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
+import { ItemModelRender } from "@iskallia/item-model-renderer";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
@@ -51,32 +52,38 @@ export const App = () => {
         flexWrap: "wrap",
       }}
     >
-      <DisplayStand
-        itemModel={archemageWandModel}
-        resolveTextureUrl={textureResolver}
-        resolveMcmeta={mcmetaResolver}
-        zoomFactor={0.8}
-      />
-      <DisplayStand
-        itemModel={deathsDoorModel}
-        resolveTextureUrl={textureResolver}
-        resolveMcmeta={mcmetaResolver}
-        zoomFactor={0.8}
-      />
-      <DisplayStand
-        itemModel={deathsDoorModel}
-        resolveTextureUrl={textureResolver}
-        resolveMcmeta={mcmetaResolver}
-        zoomFactor={0.5}
-        containerSize={200}
-      />
-
-      <DisplayStand
-        itemModel={bigChoppaModel}
-        resolveTextureUrl={textureResolver}
-        resolveMcmeta={mcmetaResolver}
-        zoomFactor={0.5}
-      />
+      <DisplayStand>
+        <ItemModelRender
+          itemModel={archemageWandModel}
+          resolveTextureUrl={textureResolver}
+          resolveMcmeta={mcmetaResolver}
+          zoomFactor={0.8}
+        />
+      </DisplayStand>
+      <DisplayStand>
+        <ItemModelRender
+          itemModel={deathsDoorModel}
+          resolveTextureUrl={textureResolver}
+          resolveMcmeta={mcmetaResolver}
+          zoomFactor={0.8}
+        />
+      </DisplayStand>
+      <DisplayStand containerSize={200}>
+        <ItemModelRender
+          itemModel={deathsDoorModel}
+          resolveTextureUrl={textureResolver}
+          resolveMcmeta={mcmetaResolver}
+          zoomFactor={0.8}
+        />
+      </DisplayStand>
+      <DisplayStand>
+        <ItemModelRender
+          itemModel={bigChoppaModel}
+          resolveTextureUrl={textureResolver}
+          resolveMcmeta={mcmetaResolver}
+          zoomFactor={0.5}
+        />
+      </DisplayStand>
     </div>
   );
 };
