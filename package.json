@@ -1,6 +1,6 @@
 {
   "name": "@iskallia/item-model-renderer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
   "repository": "github:Iskallia/item-model-renderer",
   "keywords": [],
@@ -11,7 +11,8 @@
   "exports": {
     ".": {
       "import": "./dist/@iskallia/item-model-renderer.es.js",
-      "require": "./dist/@iskallia/item-model-renderer.umd.js"
+      "require": "./dist/@iskallia/item-model-renderer.umd.js",
+      "types": "./dist/main.d.ts"
     }
   },
   "files": [
