@@ -5,8 +5,11 @@ import { Minecraft } from "../types";
 
 function prepFaceUV(uv: Minecraft.Vec4, material?: MeshMinecraftMaterial) {
   const mcmeta = material?.mcmeta;
-  const frameWidth = mcmeta?.animation?.width ?? material?.map?.image.width;
-  const frameHeight = mcmeta?.animation?.height ?? material?.map?.image.height;
+  const frameWidth = mcmeta?.animation?.width ?? material?.map?.image?.width;
+  const frameHeight =
+    mcmeta?.animation != null
+      ? mcmeta?.animation?.height ?? material?.map?.image?.height
+      : material?.map?.image?.height;
   const frameCount = mcmeta != null ? frameHeight / frameWidth : 1;
 
   const left = uv[0] / 16;

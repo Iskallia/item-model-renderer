@@ -1,21 +1,19 @@
 import { Cuboid } from "@iskallia/item-model-renderer";
 import { OrthographicCamera } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { MeshMinecraftMaterial } from "lib/render/MeshMinecraftMaterial";
 import { TextureLoader } from "lib/render/TextureLoader";
 import { ObjUtils } from "lib/util/obj.utils";
-import { useRef } from "react";
+import { ComponentRef, useEffect, useRef, useState } from "react";
 import usePromise from "react-use-promise";
-import { degToRad } from "three/src/math/MathUtils";
 import useResizeObserver from "use-resize-observer";
 import { Minecraft } from "../types";
+import { degToRad } from "three/src/math/MathUtils";
+import { useItemModelGlContext } from "lib/context/ItemModelGl.ctx";
 
 interface Props {
+  itemId: string;
   itemModel: Minecraft.ItemModel;
-  itemModelTransform?: Minecraft.ItemModelTransformationName;
-  resolveTextureUrl: (resourceLocation: string) => string;
-  resolveMcmeta: (resourceLocation: string) => Promise<Minecraft.Mcmeta | null>;
-  zoomFactor?: number;
 }
 
 const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
@@ -25,37 +23,98 @@ const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
 };
 
 export const ItemModelRender = (props: Props) => {
-  const modelTransformName = props.itemModelTransform ?? "gui";
+  const canvasRef = useRef<ComponentRef<"canvas">>(null);
+
+  const { width } = useResizeObserver<HTMLCanvasElement>({
+    box: "border-box",
+    ref: canvasRef,
+  });
+
+  return (
+    <>
+      <Canvas ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
+        <ItemModel width={width} {...props} />
+      </Canvas>
+    </>
+  );
+};
+
+export function ItemModel(props: Props & { width?: number }) {
+  const imgl = useItemModelGlContext();
+  const gl = useThree((state) => state.gl);
+
+  const modelTransformName = imgl.itemModelTransform ?? "gui";
   const modelTransformation =
     props.itemModel.display[modelTransformName] ?? IDENTITY_TRANSFORM;
 
-  const canvasRef = useResizeObserver<HTMLCanvasElement>({ box: "border-box" });
-
   const materialLookup = useRef(new Map<string, MeshMinecraftMaterial>());
 
-  const [mcmetaData] = usePromise(
-    () =>
-      Promise.all(
-        ObjUtils.getValues(props.itemModel.textures).map(async (textureId) => [
-          textureId,
-          await props.resolveMcmeta(textureId),
-        ])
-      ).then(
-        (entries) =>
-          Object.fromEntries(entries) as Record<string, Minecraft.Mcmeta | null>
-      ),
-    [props.itemModel]
-  );
+  const zoomFactor = imgl.zoomFactor ?? 1;
+  const zoom = zoomFactor * ((25 / 480) * (props.width ?? 480));
 
-  const zoomFactor = props.zoomFactor ?? 1;
-  const zoom = zoomFactor * ((25 / 480) * (canvasRef.width ?? 480));
+  const [materialMaps, setMaterialMaps] =
+    useState<Record<Minecraft.CuboidSide, MeshMinecraftMaterial>[]>();
 
-  if (mcmetaData == null) {
-    return null;
-  }
+  useEffect(() => {
+    const loadFaceMaterial = async (face: Minecraft.ItemModelFace) => {
+      const textureRef = face.texture.substring(1);
+      const textureLocation = props.itemModel.textures[textureRef];
+      const textureUrl = imgl.resolveTextureUrl(textureLocation);
+
+      if (materialLookup.current.has(textureUrl)) {
+        return materialLookup.current.get(textureUrl)!;
+      }
+
+      const texture = await TextureLoader.getOrLoadItemTexture(textureUrl);
+
+      const material = new MeshMinecraftMaterial({
+        map: texture,
+        transparent: true,
+        alphaTest: 1,
+        mcmeta: imgl.mcmmetaCache.current.get(textureLocation),
+      });
+
+      materialLookup.current.set(textureUrl, material);
+
+      return material;
+    };
+
+    const loadMaterialMap = async (element: Minecraft.ItemModelElement) => {
+      const entries = await Promise.all(
+        Object.entries(element.faces).map(
+          async ([side, face]) => [side, await loadFaceMaterial(face)] as const
+        )
+      );
+      return Object.fromEntries(entries) as Record<
+        Minecraft.CuboidSide,
+        MeshMinecraftMaterial
+      >;
+    };
+
+    (async function () {
+      setMaterialMaps(
+        await Promise.all(
+          props.itemModel.elements.map((element) => loadMaterialMap(element))
+        )
+      );
+    })();
+  }, []);
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    if (materialMaps != null) {
+      setTimeout(() => {
+        imgl.finishRendering(
+          props.itemId,
+          gl.domElement.toDataURL("image/png")
+        );
+      }, 100);
+    }
+  }, [materialMaps]);
 
   return (
-    <Canvas ref={canvasRef.ref}>
+    <>
       <OrthographicCamera
         makeDefault
         manual
@@ -71,35 +130,11 @@ export const ItemModelRender = (props: Props) => {
         rotation={modelTransformation.rotation?.map(degToRad) as Minecraft.Vec3}
         scale={modelTransformation.scale}
       >
-        {props.itemModel.elements.map((element, i) => {
-          const materialMap = ObjUtils.mapObject(
-            element.faces,
-            (side, face) => {
-              const textureRef = face.texture.substring(1);
-              const textureLocation = props.itemModel.textures[textureRef];
-              const textureUrl = props.resolveTextureUrl(textureLocation);
-
-              if (materialLookup.current.has(textureUrl)) {
-                return materialLookup.current.get(textureUrl)!;
-              }
-
-              const texture = TextureLoader.getOrLoadItemTexture(textureUrl);
-              const material = new MeshMinecraftMaterial({
-                map: texture,
-                transparent: true,
-                alphaTest: 1,
-                mcmeta: mcmetaData[textureLocation],
-              });
-
-              materialLookup.current.set(textureUrl, material);
-
-              return material;
-            }
-          );
-
-          return <Cuboid key={i} element={element} materialMap={materialMap} />;
-        })}
+        {materialMaps != null &&
+          props.itemModel.elements.map((element, i) => (
+            <Cuboid key={i} element={element} materialMap={materialMaps[i]} />
+          ))}
       </group>
-    </Canvas>
+    </>
   );
-};
+}

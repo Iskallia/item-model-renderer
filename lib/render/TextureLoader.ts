@@ -4,12 +4,16 @@ export namespace TextureLoader {
   const loader = new _TextureLoader();
   const textures = new Map<string, Texture>();
 
-  export function getOrLoadItemTexture(url: string) {
-    if (textures.has(url)) return textures.get(url);
+  export async function getOrLoadItemTexture(url: string) {
+    return new Promise<Texture>((resolve, reject) => {
+      if (textures.has(url)) return resolve(textures.get(url)!);
 
-    const texture = loader.load(url);
-    texture.minFilter = NearestFilter;
-    texture.magFilter = NearestFilter;
-    return texture;
+      const texture = loader.load(url, (texture) => {
+        resolve(texture);
+      });
+
+      texture.minFilter = NearestFilter;
+      texture.magFilter = NearestFilter;
+    });
   }
 }

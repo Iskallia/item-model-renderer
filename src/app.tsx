@@ -13,6 +13,8 @@ import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
 import { Minecraft } from "lib/types";
 import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
 import { ItemModelRender } from "@iskallia/item-model-renderer";
+import { ItemModelGlProvider } from "lib/context/ItemModelGl.ctx";
+import { ItemModelDisplayer } from "lib/render/ItemModelDisplayer";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
@@ -52,38 +54,42 @@ export const App = () => {
         flexWrap: "wrap",
       }}
     >
-      <DisplayStand>
-        <ItemModelRender
-          itemModel={archemageWandModel}
-          resolveTextureUrl={textureResolver}
-          resolveMcmeta={mcmetaResolver}
-          zoomFactor={0.8}
-        />
-      </DisplayStand>
-      <DisplayStand>
-        <ItemModelRender
-          itemModel={deathsDoorModel}
-          resolveTextureUrl={textureResolver}
-          resolveMcmeta={mcmetaResolver}
-          zoomFactor={0.8}
-        />
-      </DisplayStand>
-      <DisplayStand containerSize={200}>
-        <ItemModelRender
-          itemModel={deathsDoorModel}
-          resolveTextureUrl={textureResolver}
-          resolveMcmeta={mcmetaResolver}
-          zoomFactor={0.8}
-        />
-      </DisplayStand>
-      <DisplayStand>
-        <ItemModelRender
-          itemModel={bigChoppaModel}
-          resolveTextureUrl={textureResolver}
-          resolveMcmeta={mcmetaResolver}
-          zoomFactor={0.5}
-        />
-      </DisplayStand>
+      <ItemModelGlProvider
+        resolveTextureUrl={textureResolver}
+        resolveMcmeta={mcmetaResolver}
+        zoomFactor={0.8}
+      >
+        <DisplayStand>
+          <ItemModelDisplayer
+            itemId="A"
+            itemModel={archemageWandModel}
+            canRender
+          />
+        </DisplayStand>
+        <DisplayStand>
+          <ItemModelDisplayer
+            itemId="B"
+            itemModel={deathsDoorModel}
+            canRender
+          />
+        </DisplayStand>
+        <DisplayStand containerSize={200}>
+          <ItemModelDisplayer
+            itemId="C"
+            itemModel={deathsDoorModel}
+            canRender
+          />
+        </DisplayStand>
+        {Array.from({ length: 100 }).map((_, i) => (
+          <DisplayStand key={i} containerSize={200}>
+            <ItemModelDisplayer
+              itemId={"D"}
+              itemModel={bigChoppaModel}
+              canRender={i === 0}
+            />
+          </DisplayStand>
+        ))}
+      </ItemModelGlProvider>
     </div>
   );
 };
