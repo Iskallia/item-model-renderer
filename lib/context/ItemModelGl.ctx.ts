@@ -33,6 +33,7 @@ export const {
   ) => {
     if (mcmetaQueue.current.has(itemId)) return;
     mcmetaQueue.current.add(itemId);
+    
     Promise.all(
       ObjUtils.getValues(itemModel.textures).map(async (textureId) => [
         textureId,
@@ -58,6 +59,7 @@ export const {
   const finishRendering = (itemId: string, img: string) => {
     imageCache.current.set(itemId, img);
     setRenderingItem(undefined);
+    forceUpdate(Date.now());
   };
 
   useEffect(() => {
