@@ -52,13 +52,14 @@ export const Cuboid = (props: {
     geometry.setAttribute(
       "uv",
       new BufferAttribute(
+        // prettier-ignore
         new Float32Array([
-          ...prepFaceUV(faces.east.uv, props.materialMap.east), // 0
-          ...prepFaceUV(faces.west.uv, props.materialMap.west), // 1
-          ...prepFaceUV(faces.up.uv, props.materialMap.up), // 2
-          ...prepFaceUV(faces.down.uv, props.materialMap.down), // 3
-          ...prepFaceUV(faces.south.uv, props.materialMap.south), // 4
-          ...prepFaceUV(faces.north.uv, props.materialMap.north), // 5
+          ...prepFaceUV(faces.east?.uv ?? [0,0,0,0], props.materialMap.east), // 0
+          ...prepFaceUV(faces.west?.uv ?? [0,0,0,0], props.materialMap.west), // 1
+          ...prepFaceUV(faces.up?.uv ?? [0,0,0,0], props.materialMap.up), // 2
+          ...prepFaceUV(faces.down?.uv ?? [0,0,0,0], props.materialMap.down), // 3
+          ...prepFaceUV(faces.south?.uv ?? [0,0,0,0], props.materialMap.south), // 4
+          ...prepFaceUV(faces.north?.uv ?? [0,0,0,0], props.materialMap.north), // 5
         ]),
         2
       )
