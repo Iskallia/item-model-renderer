@@ -13,7 +13,7 @@ interface Props {
 export function ItemModelDisplayer(props: Props) {
   const imgl = useItemModelGlContext();
 
-  const cachedImg = imgl.getCachedImage(props.itemId);
+  const cachedImg = imgl.imageCache.current.get(props.itemId);
 
   useEffect(() => {
     if (cachedImg == null) {

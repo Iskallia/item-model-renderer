@@ -17,15 +17,11 @@ export const {
 } = contextBuilder((props: Props) => {
   const imageCache = useRef(new Map());
   const mcmetaCache = useRef(new Map());
-  const queue = useRef<Set<string>>(new Set());
+  const renderQueue = useRef<Set<string>>(new Set());
   const mcmetaQueue = useRef<Set<string>>(new Set());
 
   const [lastUpdateTime, forceUpdate] = useState(0);
   const [renderingItem, setRenderingItem] = useState<string>();
-
-  const getCachedImage = (itemId: string) => {
-    return imageCache.current.get(itemId);
-  };
 
   const queueItemForRender = (
     itemId: string,
@@ -34,49 +30,50 @@ export const {
     if (mcmetaQueue.current.has(itemId)) return;
     mcmetaQueue.current.add(itemId);
 
-    if (queue.current.has(itemId)) return;
+    if (renderQueue.current.has(itemId)) return;
     if (imageCache.current.has(itemId)) return;
+
+    console.debug(itemId, "queued for mcmeta retrieval");
 
     Promise.all(
       ObjUtils.getValues(itemModel.textures).map(
         async (textureId) =>
           [textureId, await props.resolveMcmeta(textureId)] as const
       )
-    )
-      .then((entries) => {
-        return Object.fromEntries(entries);
-      })
-      .then((mcmetas) => {
-        Object.entries(mcmetas).forEach(([k, v]) =>
-          mcmetaCache.current.set(k, v)
-        );
-        queue.current.add(itemId);
-        mcmetaQueue.current.delete(itemId);
-        forceUpdate(Date.now());
-      });
+    ).then((result) => {
+      result.forEach(([k, v]) => mcmetaCache.current.set(k, v));
+      mcmetaQueue.current.delete(itemId);
+      renderQueue.current.add(itemId);
+      console.debug(itemId, "queued for rendering later");
+      forceUpdate(() => Date.now());
+    });
   };
 
   const finishRendering = (itemId: string, img: string) => {
+    console.debug(itemId, "finished rendering");
     imageCache.current.set(itemId, img);
     setRenderingItem(undefined);
-    forceUpdate(Date.now());
+    forceUpdate(() => Date.now());
   };
 
   useEffect(() => {
     if (renderingItem == null) {
-      if (queue.current.size > 0) {
-        const nextItem = queue.current.keys().next().value;
-        queue.current.delete(nextItem);
+      if (renderQueue.current.size > 0) {
+        const nextItem = renderQueue.current.values().next().value;
+        renderQueue.current.delete(nextItem);
+        console.debug(nextItem, "set as the rendering target");
         setRenderingItem(nextItem);
+        forceUpdate(() => Date.now());
       }
     }
-  }, [renderingItem, lastUpdateTime]);
+  }, [lastUpdateTime]);
 
   return {
     imageCache,
     mcmetaCache,
     renderingItem,
-    getCachedImage,
+    renderQueue,
+    mcmetaQueue,
     queueItemForRender,
     finishRendering,
     ...props,

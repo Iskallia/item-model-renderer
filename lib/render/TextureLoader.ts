@@ -8,9 +8,15 @@ export namespace TextureLoader {
     return new Promise<Texture>((resolve, reject) => {
       if (textures.has(url)) return resolve(textures.get(url)!);
 
-      const texture = loader.load(url, (texture) => {
-        resolve(texture);
-      });
+      const texture = loader.load(
+        url,
+        (texture) => resolve(texture),
+        (progress) => {},
+        (error) =>
+          reject(
+            new Error(`Failed to load texture from ${url}`, { cause: error })
+          )
+      );
 
       texture.minFilter = NearestFilter;
       texture.magFilter = NearestFilter;
