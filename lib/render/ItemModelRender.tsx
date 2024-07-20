@@ -67,12 +67,14 @@ export function ItemModel(props: Props & { width?: number }) {
 
       const texture = await TextureLoader.getOrLoadItemTexture(textureUrl);
 
-      const material = new MeshMinecraftMaterial({
-        map: texture,
-        transparent: true,
-        alphaTest: 1,
-        mcmeta: imgl.mcmmetaCache.current.get(textureLocation),
-      });
+      const material = new MeshMinecraftMaterial(
+        imgl.mcmetaCache.current.get(textureLocation),
+        {
+          map: texture,
+          transparent: true,
+          alphaTest: 1,
+        }
+      );
 
       materialLookup.current.set(textureUrl, material);
 

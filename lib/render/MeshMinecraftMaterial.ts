@@ -5,11 +5,10 @@ export class MeshMinecraftMaterial extends MeshStandardMaterial {
   public readonly mcmeta?: Minecraft.Mcmeta | null;
 
   constructor(
-    parameters?: MeshStandardMaterialParameters & {
-      mcmeta?: Minecraft.Mcmeta | null;
-    }
+    mcmeta?: Minecraft.Mcmeta | null,
+    parameters?: MeshStandardMaterialParameters
   ) {
     super({ ...parameters, transparent: true, alphaTest: 1 });
-    this.mcmeta = parameters?.mcmeta;
+    this.mcmeta = mcmeta;
   }
 }
