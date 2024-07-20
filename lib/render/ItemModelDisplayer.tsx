@@ -7,7 +7,7 @@ interface Props {
   itemId: string;
   itemModel: Minecraft.ItemModel;
   canRender?: boolean;
-  renderLoder?: () => React.ReactNode;
+  renderLoader?: () => React.ReactNode;
 }
 
 export function ItemModelDisplayer(props: Props) {
@@ -26,7 +26,7 @@ export function ItemModelDisplayer(props: Props) {
   }
 
   if (!cachedImg) {
-    return props.renderLoder?.();
+    return props.renderLoader?.();
   }
 
   return <img src={cachedImg} />;

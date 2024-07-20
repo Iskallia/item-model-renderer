@@ -83,9 +83,9 @@ export const App = () => {
         {Array.from({ length: 100 }).map((_, i) => (
           <DisplayStand key={i} containerSize={200}>
             <ItemModelDisplayer
-              itemId={"D"}
+              itemId={"D"+i}
               itemModel={bigChoppaModel}
-              canRender={i === 0}
+              canRender
             />
           </DisplayStand>
         ))}

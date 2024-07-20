@@ -100,8 +100,6 @@ export function ItemModel(props: Props & { width?: number }) {
     })();
   }, []);
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     if (materialMaps != null) {
       setTimeout(() => {

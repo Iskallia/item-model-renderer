@@ -16,7 +16,7 @@ export const {
   useContext: useItemModelGlContext,
 } = contextBuilder((props: Props) => {
   const imageCache = useRef(new Map());
-  const mcmmetaCache = useRef(new Map());
+  const mcmetaCache = useRef(new Map());
   const queue = useRef<Set<string>>(new Set());
   const mcmetaQueue = useRef<Set<string>>(new Set());
 
@@ -33,22 +33,22 @@ export const {
   ) => {
     if (mcmetaQueue.current.has(itemId)) return;
     mcmetaQueue.current.add(itemId);
-    
+
+    if (queue.current.has(itemId)) return;
+    if (imageCache.current.has(itemId)) return;
+
     Promise.all(
-      ObjUtils.getValues(itemModel.textures).map(async (textureId) => [
-        textureId,
-        await props.resolveMcmeta(textureId),
-      ])
+      ObjUtils.getValues(itemModel.textures).map(
+        async (textureId) =>
+          [textureId, await props.resolveMcmeta(textureId)] as const
+      )
     )
       .then((entries) => {
-        return Object.fromEntries(entries) as Record<
-          string,
-          Minecraft.Mcmeta | null
-        >;
+        return Object.fromEntries(entries);
       })
       .then((mcmetas) => {
         Object.entries(mcmetas).forEach(([k, v]) =>
-          mcmmetaCache.current.set(k, v)
+          mcmetaCache.current.set(k, v)
         );
         queue.current.add(itemId);
         mcmetaQueue.current.delete(itemId);
@@ -73,8 +73,9 @@ export const {
   }, [renderingItem, lastUpdateTime]);
 
   return {
+    imageCache,
+    mcmetaCache,
     renderingItem,
-    mcmmetaCache,
     getCachedImage,
     queueItemForRender,
     finishRendering,
