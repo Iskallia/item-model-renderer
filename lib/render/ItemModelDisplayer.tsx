@@ -33,6 +33,7 @@ export function ItemModelDisplayer(props: Props) {
     <img
       ref={ref}
       src={cachedImg}
+      hidden={!cachedImg}
       className={props.className}
       style={{ width: "100%", height: "100%" }}
     />
