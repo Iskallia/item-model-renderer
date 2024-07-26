@@ -59,34 +59,19 @@ export const App = () => {
         resolveMcmeta={mcmetaResolver}
         zoomFactor={0.8}
       >
+        <ItemModelRender />
         <DisplayStand>
-          <ItemModelDisplayer
-            itemId="A"
-            itemModel={archemageWandModel}
-            canRender
-          />
+          <ItemModelDisplayer itemId="A" itemModel={archemageWandModel} />
         </DisplayStand>
         <DisplayStand>
-          <ItemModelDisplayer
-            itemId="B"
-            itemModel={deathsDoorModel}
-            canRender
-          />
+          <ItemModelDisplayer itemId="B" itemModel={deathsDoorModel} />
         </DisplayStand>
         <DisplayStand containerSize={200}>
-          <ItemModelDisplayer
-            itemId="C"
-            itemModel={deathsDoorModel}
-            canRender
-          />
+          <ItemModelDisplayer itemId="C" itemModel={deathsDoorModel} />
         </DisplayStand>
         {Array.from({ length: 100 }).map((_, i) => (
           <DisplayStand key={i} containerSize={200}>
-            <ItemModelDisplayer
-              itemId={"D" + i}
-              itemModel={bigChoppaModel}
-              canRender
-            />
+            <ItemModelDisplayer itemId={"D" + i} itemModel={bigChoppaModel} />
           </DisplayStand>
         ))}
       </ItemModelGlProvider>

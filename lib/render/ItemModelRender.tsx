@@ -1,20 +1,16 @@
 import { Cuboid } from "@iskallia/item-model-renderer";
 import { OrthographicCamera } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
+import {
+  RenderContext,
+  useItemModelGlContext,
+} from "lib/context/ItemModelGl.ctx";
 import { MeshMinecraftMaterial } from "lib/render/MeshMinecraftMaterial";
 import { TextureLoader } from "lib/render/TextureLoader";
-import { ObjUtils } from "lib/util/obj.utils";
 import { ComponentRef, useEffect, useRef, useState } from "react";
-import usePromise from "react-use-promise";
-import useResizeObserver from "use-resize-observer";
-import { Minecraft } from "../types";
+import { createPortal } from "react-dom";
 import { degToRad } from "three/src/math/MathUtils";
-import { useItemModelGlContext } from "lib/context/ItemModelGl.ctx";
-
-interface Props {
-  itemId: string;
-  itemModel: Minecraft.ItemModel;
-}
+import { Minecraft } from "../types";
 
 const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
   rotation: [0, 0, 0],
@@ -22,43 +18,62 @@ const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
   scale: [1, 1, 1],
 };
 
-export const ItemModelRender = (props: Props) => {
+export const ItemModelRender = () => {
   const canvasRef = useRef<ComponentRef<"canvas">>(null);
 
-  const { width } = useResizeObserver<HTMLCanvasElement>({
-    box: "border-box",
-    ref: canvasRef,
-  });
+  const imgl = useItemModelGlContext();
+
+  const currentCtx = !imgl.renderingItem
+    ? undefined
+    : imgl.renderContextMap.current.get(imgl.renderingItem);
 
   return (
     <>
-      <Canvas ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
-        <ItemModel width={width} {...props} />
-      </Canvas>
+      {createPortal(
+        <div
+          id="iskallia-item-model-renderer"
+          style={{
+            width: currentCtx?.imageSize,
+            height: currentCtx?.imageSize,
+            position: "fixed",
+            top: "-100%",
+            left: "-100%",
+          }}
+        >
+          <Canvas ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
+            {currentCtx && (
+              <ItemModel key={currentCtx.itemId} ctx={currentCtx} />
+            )}
+          </Canvas>
+        </div>,
+        document.body
+      )}
     </>
   );
 };
 
-export function ItemModel(props: Props & { width?: number }) {
+export function ItemModel(props: { ctx: RenderContext }) {
   const imgl = useItemModelGlContext();
   const gl = useThree((state) => state.gl);
 
   const modelTransformName = imgl.itemModelTransform ?? "gui";
   const modelTransformation =
-    props.itemModel.display[modelTransformName] ?? IDENTITY_TRANSFORM;
+    props.ctx.itemModel.display[modelTransformName] ?? IDENTITY_TRANSFORM;
 
   const materialLookup = useRef(new Map<string, MeshMinecraftMaterial>());
 
   const zoomFactor = imgl.zoomFactor ?? 1;
-  const zoom = zoomFactor * ((25 / 480) * (props.width ?? 480));
+  const zoom = zoomFactor * ((25 / 480) * (props.ctx.imageSize ?? 480));
 
   const [materialMaps, setMaterialMaps] =
     useState<Record<Minecraft.CuboidSide, MeshMinecraftMaterial>[]>();
 
   useEffect(() => {
+    console.debug("Rendering", props.ctx);
+
     const loadFaceMaterial = async (face: Minecraft.ItemModelFace) => {
       const textureRef = face.texture.substring(1);
-      const textureLocation = props.itemModel.textures[textureRef];
+      const textureLocation = props.ctx.itemModel.textures[textureRef];
       const textureUrl = imgl.resolveTextureUrl(textureLocation);
 
       if (materialLookup.current.has(textureUrl)) {
@@ -93,25 +108,20 @@ export function ItemModel(props: Props & { width?: number }) {
       >;
     };
 
-    (async function () {
-      setMaterialMaps(
-        await Promise.all(
-          props.itemModel.elements.map((element) => loadMaterialMap(element))
-        )
+    const loadMaterialMaps = async () => {
+      const loadedMaps = await Promise.all(
+        props.ctx.itemModel.elements.map((element) => loadMaterialMap(element))
       );
-    })();
-  }, []);
+      setMaterialMaps(loadedMaps);
 
-  useEffect(() => {
-    if (materialMaps != null) {
       setTimeout(() => {
-        imgl.finishRendering(
-          props.itemId,
-          gl.domElement.toDataURL("image/png")
-        );
-      }, 100);
-    }
-  }, [materialMaps]);
+        const image = gl.domElement.toDataURL("image/png");
+        imgl.finishRendering(props.ctx.itemId, image);
+      }, imgl.individualRenderWait ?? 100);
+    };
+
+    loadMaterialMaps();
+  }, []);
 
   return (
     <>
@@ -131,7 +141,7 @@ export function ItemModel(props: Props & { width?: number }) {
         scale={modelTransformation.scale}
       >
         {materialMaps != null &&
-          props.itemModel.elements.map((element, i) => (
+          props.ctx.itemModel.elements.map((element, i) => (
             <Cuboid key={i} element={element} materialMap={materialMaps[i]} />
           ))}
       </group>

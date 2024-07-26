@@ -1,33 +1,40 @@
-import { ItemModelRender } from "@iskallia/item-model-renderer";
 import { useItemModelGlContext } from "lib/context/ItemModelGl.ctx";
 import { Minecraft } from "lib/types";
-import { useEffect } from "react";
+import { ComponentRef, useEffect, useRef } from "react";
 
 interface Props {
   itemId: string;
   itemModel: Minecraft.ItemModel;
-  canRender?: boolean;
-  renderLoader?: () => React.ReactNode;
+  renderedSize?: number;
+  className?: string;
 }
 
 export function ItemModelDisplayer(props: Props) {
+  const ref = useRef<ComponentRef<"img">>(null);
+
   const imgl = useItemModelGlContext();
 
   const cachedImg = imgl.imageCache.current.get(props.itemId);
 
   useEffect(() => {
-    if (cachedImg == null) {
-      imgl.queueItemForRender(props.itemId, props.itemModel);
+    if (!cachedImg) {
+      imgl.queueItemForRender({
+        itemId: props.itemId,
+        itemModel: props.itemModel,
+        imageSize:
+          props.renderedSize ??
+          ref.current?.getBoundingClientRect().width ??
+          300,
+      });
     }
   }, [cachedImg]);
 
-  if (imgl.renderingItem === props.itemId && props.canRender) {
-    return <ItemModelRender {...props} />;
-  }
-
-  if (!cachedImg) {
-    return props.renderLoader?.();
-  }
-
-  return <img src={cachedImg} />;
+  return (
+    <img
+      ref={ref}
+      src={cachedImg}
+      className={props.className}
+      style={{ width: "100%", height: "100%" }}
+    />
+  );
 }
