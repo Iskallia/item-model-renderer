@@ -5,6 +5,7 @@ import archmageTexture from "./asset/texture/archmage.png";
 import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import bigChoppaTexture from "./asset/texture/big_choppa.png";
 import bigChoppaTexture1 from "./asset/texture/big_choppa_layer1.png";
+import presentTexture from "./asset/texture/present.png";
 import bigChoppaTexture1McmetaRaw from "./asset/texture/big_choppa_layer1.png.mcmeta?raw";
 
 import { archemageWandModel } from "./asset/model/archemage_wand";
@@ -15,9 +16,11 @@ import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
 import { ItemModelRender } from "@iskallia/item-model-renderer";
 import { ItemModelGlProvider } from "lib/context/ItemModelGl.ctx";
 import { ItemModelDisplayer } from "lib/render/ItemModelDisplayer";
+import { presentShieldModel } from "src/asset/model/present_shield";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
+    if (resourceLocation == null) throw new Error();
     switch (resourceLocation) {
       case "the_vault:item/gear/wand/archmage":
         return archmageTexture;
@@ -27,6 +30,8 @@ export const App = () => {
         return bigChoppaTexture;
       case "the_vault:item/gear/axe/big_choppa_layer1":
         return bigChoppaTexture1;
+      case "the_vault:item/gear/shield/present":
+        return presentTexture;
       default:
         return testTexture;
     }
@@ -68,6 +73,9 @@ export const App = () => {
         </DisplayStand>
         <DisplayStand containerSize={200}>
           <ItemModelDisplayer itemId="C" itemModel={deathsDoorModel} />
+        </DisplayStand>
+        <DisplayStand containerSize={200}>
+          <ItemModelDisplayer itemId="S" itemModel={presentShieldModel} />
         </DisplayStand>
         {Array.from({ length: 100 }).map((_, i) => (
           <DisplayStand key={i} containerSize={200}>

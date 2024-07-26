@@ -74,6 +74,8 @@ export function ItemModel(props: { ctx: RenderContext }) {
     const loadFaceMaterial = async (face: Minecraft.ItemModelFace) => {
       const textureRef = face.texture.substring(1);
       const textureLocation = props.ctx.itemModel.textures[textureRef];
+      if (!textureLocation) return null;
+
       const textureUrl = imgl.resolveTextureUrl(textureLocation);
 
       if (materialLookup.current.has(textureUrl)) {

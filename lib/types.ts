@@ -27,7 +27,7 @@ export namespace Minecraft {
     };
   };
 
-  export type ItemModelFace = { uv: Vec4; texture: string };
+  export type ItemModelFace = { uv: Vec4; texture: string; rotation?: number };
 
   export type ItemModelElement = {
     name?: string;
