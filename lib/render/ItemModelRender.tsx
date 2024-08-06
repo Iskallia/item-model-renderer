@@ -29,25 +29,26 @@ export const ItemModelRender = () => {
 
   return (
     <>
-      {createPortal(
-        <div
-          id="iskallia-item-model-renderer"
-          style={{
-            width: currentCtx?.imageSize,
-            height: currentCtx?.imageSize,
-            position: "fixed",
-            top: "-100%",
-            left: "-100%",
-          }}
-        >
-          <Canvas ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
-            {currentCtx && (
-              <ItemModel key={currentCtx.itemId} ctx={currentCtx} />
-            )}
-          </Canvas>
-        </div>,
-        document.body
-      )}
+      {imgl.renderingItem &&
+        createPortal(
+          <div
+            id="iskallia-item-model-renderer"
+            style={{
+              width: currentCtx?.imageSize,
+              height: currentCtx?.imageSize,
+              position: "fixed",
+              top: "-100%",
+              left: "-100%",
+            }}
+          >
+            <Canvas ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
+              {currentCtx && (
+                <ItemModel key={currentCtx.itemId} ctx={currentCtx} />
+              )}
+            </Canvas>
+          </div>,
+          document.body
+        )}
     </>
   );
 };
