@@ -1,4 +1,4 @@
-import { Cuboid } from '@iskallia/item-model-renderer';
+import { Cuboid } from '@iskallia-dev/item-model-renderer';
 import { OrthographicCamera } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { RenderContext, useItemModelGlContext } from 'lib/context/ItemModelGl.ctx';

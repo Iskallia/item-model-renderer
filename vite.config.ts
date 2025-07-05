@@ -27,7 +27,7 @@ export default defineConfig((configEnv) => ({
       entry: resolve("lib", "main.tsx"),
       name: "ReactFeatureFlag",
       formats: ["cjs", "es", "umd", "iife"],
-      fileName: (format) => `@iskallia/item-model-renderer.${format}.js`,
+      fileName: (format) => `@iskallia-dev/item-model-renderer.${format}.js`,
     },
     rollupOptions: {
       external: ["react"],

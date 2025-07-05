@@ -35,13 +35,13 @@ The renderer consists of several key components:
 ## Installation
 
 ```bash
-pnpm install @iskallia/item-model-renderer
+pnpm install @iskallia-dev/item-model-renderer
 ```
 
 ## Basic Usage
 
 ```tsx
-import { ItemModelGlProvider, ItemModelDisplayer } from '@iskallia/item-model-renderer';
+import { ItemModelGlProvider, ItemModelDisplayer } from '@iskallia-dev/item-model-renderer';
 
 // Define your texture resolver, this will provide the texture url for the given model id
 const textureResolver = (resourceLocation: string) => {

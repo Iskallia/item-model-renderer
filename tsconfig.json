@@ -21,7 +21,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@iskallia/item-model-renderer": [
+      "@iskallia-dev/item-model-renderer": [
         "./lib/main.tsx"
       ]
     }

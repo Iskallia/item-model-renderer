@@ -1,22 +1,22 @@
 import { DisplayStand } from "src/component/DisplayStand";
 
-import testTexture from "./asset/texture/test.png";
 import archmageTexture from "./asset/texture/archmage.png";
-import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import bigChoppaTexture from "./asset/texture/big_choppa.png";
 import bigChoppaTexture1 from "./asset/texture/big_choppa_layer1.png";
-import presentTexture from "./asset/texture/present.png";
 import bigChoppaTexture1McmetaRaw from "./asset/texture/big_choppa_layer1.png.mcmeta?raw";
+import deathsDoorTexture from "./asset/texture/deaths_door.png";
+import presentTexture from "./asset/texture/present.png";
+import testTexture from "./asset/texture/test.png";
 
-import { archemageWandModel } from "./asset/model/archemage_wand";
-import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
-import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
-import { Minecraft } from "lib/types";
-import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
-import { ItemModelRender } from "@iskallia/item-model-renderer";
+import { ItemModelRender } from "@iskallia-dev/item-model-renderer";
 import { ItemModelGlProvider } from "lib/context/ItemModelGl.ctx";
 import { ItemModelDisplayer } from "lib/render/ItemModelDisplayer";
+import { Minecraft } from "lib/types";
+import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
 import { presentShieldModel } from "src/asset/model/present_shield";
+import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
+import { archemageWandModel } from "./asset/model/archemage_wand";
+import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
