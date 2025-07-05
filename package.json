@@ -1,17 +1,17 @@
 {
-  "name": "@iskallia/item-model-renderer",
+  "name": "@iskallia-dev/item-model-renderer",
   "version": "1.1.4",
   "description": "",
   "repository": "github:Iskallia/item-model-renderer",
   "keywords": [],
   "type": "module",
-  "main": "./dist/@iskallia/item-model-renderer.es.js",
-  "module": "./dist/@iskallia/item-model-renderer.es.js",
+  "main": "./dist/@iskallia-dev/item-model-renderer.es.js",
+  "module": "./dist/@iskallia-dev/item-model-renderer.es.js",
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/@iskallia/item-model-renderer.es.js",
-      "require": "./dist/@iskallia/item-model-renderer.umd.js",
+      "import": "./dist/@iskallia-dev/item-model-renderer.es.js",
+      "require": "./dist/@iskallia-dev/item-model-renderer.umd.js",
       "types": "./dist/main.d.ts"
     }
   },
