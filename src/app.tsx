@@ -8,10 +8,7 @@ import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import presentTexture from "./asset/texture/present.png";
 import testTexture from "./asset/texture/test.png";
 
-import { ItemModelRender } from "@iskallia-dev/item-model-renderer";
-import { ItemModelGlProvider } from "lib/context/ItemModelGl.ctx";
-import { ItemModelDisplayer } from "lib/render/ItemModelDisplayer";
-import { Minecraft } from "lib/types";
+import { ItemModelDisplayer, ItemModelGlProvider, ItemModelRender, Minecraft } from '@iskallia-dev/item-model-renderer';
 import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
 import { presentShieldModel } from "src/asset/model/present_shield";
 import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
