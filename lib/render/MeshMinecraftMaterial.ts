@@ -8,7 +8,12 @@ export class MeshMinecraftMaterial extends MeshStandardMaterial {
     mcmeta?: Minecraft.Mcmeta | null,
     parameters?: MeshStandardMaterialParameters
   ) {
-    super({ ...parameters, transparent: true, alphaTest: 1 });
+    super({ 
+      ...parameters, 
+      transparent: true, 
+      alphaTest: 1,
+      flatShading: false,
+    });
     this.mcmeta = mcmeta;
   }
 }

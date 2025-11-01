@@ -110,8 +110,30 @@ export function ItemModel(props: { ctx: RenderContext }) {
 		<>
 			<OrthographicCamera makeDefault manual zoom={zoom} position={[0, 0, 100]} />
 
-			<ambientLight intensity={0.25} color={0xffffffff} />
-			<directionalLight position={[-1, -1, 10]} />
+			<ambientLight intensity={0.3} color={0xffffff} />
+
+			<directionalLight
+				position={[10, 15, 10]}
+				intensity={1.5}
+				color={0xffffff}
+				castShadow={false}
+			/>
+
+			<directionalLight
+				position={[-8, -5, 5]}
+				intensity={0.5}
+				color={0xffffff}
+				castShadow={false}
+			/>
+
+			<directionalLight
+				position={[-5, 10, -8]}
+				intensity={0.7}
+				color={0xffffff}
+				castShadow={false}
+			/>
+
+			<pointLight position={[0, 15, 15]} intensity={0.4} distance={50} color={0xffffff} />
 
 			<group
 				position={modelTransformation.translation}

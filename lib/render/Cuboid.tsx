@@ -36,7 +36,11 @@ export const Cuboid = (props: {
   const lenY = props.element.to[1] - props.element.from[1];
   const lenZ = props.element.to[2] - props.element.from[2];
 
-  const geometry = useMemo(() => new BoxGeometry(lenX, lenY, lenZ), []);
+  const geometry = useMemo(() => {
+    const geo = new BoxGeometry(lenX, lenY, lenZ);
+    geo.computeVertexNormals();
+    return geo;
+  }, [lenX, lenY, lenZ]);
 
   const materials = [
     props.materialMap.east,

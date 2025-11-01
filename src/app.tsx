@@ -7,6 +7,7 @@ import bigChoppaTexture1McmetaRaw from "./asset/texture/big_choppa_layer1.png.mc
 import deathsDoorTexture from "./asset/texture/deaths_door.png";
 import presentTexture from "./asset/texture/present.png";
 import testTexture from "./asset/texture/test.png";
+import springWandTexture from "./asset/texture/spring_wand.png";
 
 import { ItemModelDisplayer, ItemModelGlProvider, ItemModelRender, Minecraft } from '@iskallia-dev/item-model-renderer';
 import { bigChoppaModel } from "src/asset/model/big_choppa_axe";
@@ -14,6 +15,7 @@ import { presentShieldModel } from "src/asset/model/present_shield";
 import { resolveAfterDelay } from "src/asset/util/resolveAfterDelay";
 import { archemageWandModel } from "./asset/model/archemage_wand";
 import { deathsDoorModel } from "./asset/model/deathsdoor_sword";
+import { springWandModel } from "./asset/model/spring_wand";
 
 export const App = () => {
   const textureResolver = (resourceLocation: string) => {
@@ -29,6 +31,8 @@ export const App = () => {
         return bigChoppaTexture1;
       case "the_vault:item/gear/shield/present":
         return presentTexture;
+      case "the_vault:item/gear/wand/spring_wand":
+        return springWandTexture;
       default:
         return testTexture;
     }
@@ -73,6 +77,9 @@ export const App = () => {
         </DisplayStand>
         <DisplayStand containerSize={200}>
           <ItemModelDisplayer itemId="S" itemModel={presentShieldModel} />
+        </DisplayStand>
+        <DisplayStand containerSize={200}>
+          <ItemModelDisplayer itemId="E" itemModel={springWandModel} />
         </DisplayStand>
         {Array.from({ length: 100 }).map((_, i) => (
           <DisplayStand key={i} containerSize={200}>
