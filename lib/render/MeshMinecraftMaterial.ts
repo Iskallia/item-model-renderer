@@ -1,4 +1,4 @@
-import { Minecraft } from "lib/types";
+import { Minecraft } from "../types";
 import { MeshStandardMaterial, MeshStandardMaterialParameters } from "three";
 
 export class MeshMinecraftMaterial extends MeshStandardMaterial {

@@ -1,4 +1,4 @@
-import { MeshMinecraftMaterial } from "lib/render/MeshMinecraftMaterial";
+import { MeshMinecraftMaterial } from "./MeshMinecraftMaterial";
 import { useEffect, useMemo, useRef } from "react";
 import { BoxGeometry, BufferAttribute, Mesh } from "three";
 import { Minecraft } from "../types";

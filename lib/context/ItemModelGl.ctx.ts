@@ -1,5 +1,5 @@
-import { Minecraft } from 'lib/types';
-import { ObjUtils } from 'lib/util/obj.utils';
+import { Minecraft } from '../types';
+import { ObjUtils } from '../util/obj.utils';
 import { PropsWithChildren, useRef, useState } from 'react';
 import { contextBuilder } from 'react-compound-composer';
 

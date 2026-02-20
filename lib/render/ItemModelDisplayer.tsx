@@ -1,5 +1,5 @@
-import { useItemModelGlContext } from "lib/context/ItemModelGl.ctx";
-import { Minecraft } from "lib/types";
+import { useItemModelGlContext } from "../context/ItemModelGl.ctx";
+import { Minecraft } from "../types";
 import { ElementRef, useEffect, useRef } from "react";
 
 interface Props {

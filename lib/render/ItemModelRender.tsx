@@ -1,9 +1,9 @@
 import { Cuboid } from '@iskallia-dev/item-model-renderer';
 import { OrthographicCamera } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
-import { RenderContext, useItemModelGlContext } from 'lib/context/ItemModelGl.ctx';
-import { MeshMinecraftMaterial } from 'lib/render/MeshMinecraftMaterial';
-import { TextureLoader } from 'lib/render/TextureLoader';
+import { RenderContext, useItemModelGlContext } from '../context/ItemModelGl.ctx';
+import { MeshMinecraftMaterial } from './MeshMinecraftMaterial';
+import { TextureLoader } from './TextureLoader';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 

@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+// import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
 // import { EsLinter, linterPlugin } from 'vite-plugin-linter'
 
@@ -14,13 +14,8 @@ export default defineConfig({
 		//   include: ['./src}/**/*.{ts,tsx}'],
 		//   linters: [new EsLinter({ configEnv })],
 		// }),
-		dts({
-			include: ['lib/**/*'],
-			beforeWriteFile: (filePath, content) => ({
-				filePath: filePath.replace('/lib', ''),
-				content,
-			}),
-		}),
+		// dts plugin disabled - using hand-crafted index.d.ts to avoid
+		// duplicate @types/react issues when consumed via symlink
 	],
 	build: {
 		lib: {
