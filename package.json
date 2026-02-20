@@ -1,6 +1,6 @@
 {
   "name": "@iskallia-dev/item-model-renderer",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "",
   "repository": "github:Iskallia/item-model-renderer",
   "keywords": [],
@@ -32,14 +32,19 @@
     "url": "https://github.com/Iskallia"
   },
   "license": "CC BY-SA 4.0",
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "devDependencies": {
     "@types/node": "^24.0.10",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.7",
     "@types/three": "^0.178.0",
     "@vitejs/plugin-react": "^4.6.0",
     "pnpm": "^10.12.4",
-    "react-dom": "^19.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.89.2",
     "vite": "^7.0.2",
     "vite-plugin-dts": "^5.0.0-beta.2",
@@ -47,9 +52,8 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "dependencies": {
-    "@react-three/drei": "^10.4.2",
-    "@react-three/fiber": "^9.2.0",
-    "react": "^19.1.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "react-compound-composer": "^1.5.1",
     "react-use-promise": "^0.5.0",
     "three": "^0.178.0",

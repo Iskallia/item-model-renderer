@@ -1,6 +1,6 @@
 import { useItemModelGlContext } from "lib/context/ItemModelGl.ctx";
 import { Minecraft } from "lib/types";
-import { ComponentRef, useEffect, useRef } from "react";
+import { ElementRef, useEffect, useRef } from "react";
 
 interface Props {
   itemId: string;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function ItemModelDisplayer(props: Props) {
-  const ref = useRef<ComponentRef<"img">>(null);
+  const ref = useRef<ElementRef<"img">>(null);
 
   const imgl = useItemModelGlContext();
 

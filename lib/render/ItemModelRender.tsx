@@ -4,7 +4,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { RenderContext, useItemModelGlContext } from 'lib/context/ItemModelGl.ctx';
 import { MeshMinecraftMaterial } from 'lib/render/MeshMinecraftMaterial';
 import { TextureLoader } from 'lib/render/TextureLoader';
-import { ComponentRef, useEffect, useRef, useState } from 'react';
+import { ElementRef, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Minecraft } from '../types';
@@ -16,7 +16,7 @@ const IDENTITY_TRANSFORM: Minecraft.ItemModelTransformation = {
 };
 
 export const ItemModelRender = () => {
-	const canvasRef = useRef<ComponentRef<'canvas'>>(null);
+	const canvasRef = useRef<ElementRef<'canvas'>>(null);
 
 	const imgl = useItemModelGlContext();
 
