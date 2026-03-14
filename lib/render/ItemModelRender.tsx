@@ -60,8 +60,6 @@ export function ItemModel(props: { ctx: RenderContext }) {
 	const [materialMaps, setMaterialMaps] = useState<Record<Minecraft.CuboidSide, MeshMinecraftMaterial>[]>();
 
 	useEffect(() => {
-		console.debug('Rendering', props.ctx);
-
 		const loadFaceMaterial = async (face: Minecraft.ItemModelFace) => {
 			const textureRef = face.texture.substring(1);
 			const textureLocation = props.ctx.itemModel.textures[textureRef];
